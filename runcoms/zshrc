@@ -1,9 +1,17 @@
-#
 # Executes commands at the start of an interactive session.
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
+
+# Antigen stuff
+
+source /home/cazagen/Documents/antigen.zsh
+antigen bundle djui/alias-tips
+
+export ZSH_PLUGINS_ALIAS_TIPS_TEXT="Alias tip: "
+
+
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -11,3 +19,56 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/Codenstuff
+source /usr/local/bin/virtualenvwrapper.sh
+
+function leds { mosquitto_pub -h mqtt -t 'display/g1/leds' -m $1; }
+#export -f leds
+
+function lights { mosquitto_pub -h mqtt -t 'dali/g1/preset/'$1 -n; }
+#export -f lights
+
+export TERM="xterm-256color"
+
+source $HOME/.aliases
+
+export GOROOT="/usr/local/go"
+export GOPATH="${GOROOT}:${HOME}/.go"
+
+PATH=$PATH:$GOPATH/bin # Add GOPATH/bin to PATH for scripting
+
+sudo-command-line() {
+    [[ -z $BUFFER ]] && zle up-history
+    if [[ $BUFFER == sudo\ * ]]; then
+        LBUFFER="${LBUFFER#sudo }"
+    elif [[ $BUFFER == $EDITOR\ * ]]; then
+        LBUFFER="${LBUFFER#$EDITOR }"
+        LBUFFER="sudoedit $LBUFFER"
+    elif [[ $BUFFER == sudoedit\ * ]]; then
+        LBUFFER="${LBUFFER#sudoedit }"
+        LBUFFER="$EDITOR $LBUFFER"
+    else
+        LBUFFER="sudo $LBUFFER"
+    fi
+}
+zle -N sudo-command-line
+# Defined shortcut keys: [Esc] [Esc]
+bindkey "\e\e" sudo-command-line
+
+function tunnel { sshuttle -r $1 0/0 --dns}
+alias "tunnel tardis"="tunnel ssh.tard.is"
+
+alias fucking=sudo
+alias git=hub
+
+PATH="/home/cazagen/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/cazagen/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/cazagen/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/cazagen/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/cazagen/perl5"; export PERL_MM_OPT;
+
+export PATH="/home/cazagen/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
