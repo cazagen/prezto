@@ -6,7 +6,7 @@
 
 # Antigen stuff
 
-source /home/cazagen/Documents/antigen.zsh
+source /home/cazagen/.zprezto/antigen.zsh
 antigen bundle djui/alias-tips
 
 export ZSH_PLUGINS_ALIAS_TIPS_TEXT="Alias tip: "
